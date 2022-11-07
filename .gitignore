@@ -128,3 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .DS_Store
+
+05_local_features/homework/plants
+05_local_features/homework/puzzle
