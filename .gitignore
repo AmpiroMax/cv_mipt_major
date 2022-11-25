@@ -131,3 +131,6 @@ dmypy.json
 
 05_local_features/homework/plants
 05_local_features/homework/puzzle
+
+# VS Code
+.vscode
