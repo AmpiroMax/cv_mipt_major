@@ -1,5 +1,6 @@
+""" Motion """
+
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor
 
 import cv2
 import skimage
