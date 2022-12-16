@@ -3,20 +3,32 @@ from train_data_generator import (
     SAVE_NEGATIVE_PATH
 )
 
-
-from torchvision import transforms
-from torch.utils.data import Dataset, DataLoader
-
 import os
 import cv2
 import torch
 import numpy as np
-import torch.nn as nn
 import matplotlib as plt
+import torch.nn as nn
+from torchvision import transforms
+from torch.utils.data import Dataset, DataLoader
 from typing import List
 from tqdm.auto import tqdm
+
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 MODEL_SAVE_PATH = "09_motion_flow/homework_07/train_test_data/models/"
+
+TRANSFORM = transforms.Compose([
+    transforms.ToTensor(),
+    # to normalize correctly one should calculated mean and std
+    # other whole dataset
+    # transforms.Normalize([0.0, 0.0, 0.0], [1.0, 1.0, 1.0]),
+    transforms.Lambda(torch.flatten)
+])
+
+
+def train_image_preprocessing(image: cv2.Mat) -> torch.Tensor:
+    image = TRANSFORM(image)
+    return image
 
 
 class SimplePerceptron(nn.Module):
@@ -52,18 +64,13 @@ class SimplePerceptron(nn.Module):
 
 class PlanesDataset(Dataset):
     def __init__(self):
-        self.transform = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize([0.0, 0.0, 0.0], [1.0, 1.0, 1.0]),
-            transforms.Lambda(torch.flatten)
-        ])
 
         self.images = []
         self.labels = []
 
         for img_name in tqdm(os.listdir(SAVE_POSITIVE_PATH)):
             self.images += [
-                self._preproc(
+                train_image_preprocessing(
                     cv2.imread(SAVE_POSITIVE_PATH + img_name)
                 )
             ]
@@ -71,7 +78,7 @@ class PlanesDataset(Dataset):
 
         for img_name in tqdm(os.listdir(SAVE_NEGATIVE_PATH)):
             self.images += [
-                self._preproc(
+                train_image_preprocessing(
                     cv2.imread(SAVE_NEGATIVE_PATH + img_name)
                 )
             ]
@@ -84,10 +91,6 @@ class PlanesDataset(Dataset):
 
     def __getitem__(self, idx: int):
         return self.images[idx], self.labels[idx]
-
-    def _preproc(self, image: cv2.Mat) -> cv2.Mat:
-        image = self.transform(image)
-        return image
 
 
 def fit_epoch(

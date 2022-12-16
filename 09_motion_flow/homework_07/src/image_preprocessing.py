@@ -16,6 +16,16 @@ def get_video_path(video_name: str) -> str:
     return VIDOES_PATH + video_name + ".mov"
 
 
+def frame_detector_preprocessing(
+    frame: cv2.Mat
+) -> cv2.Mat:
+    new_w = frame.shape[1] // SCALING_FACTOR
+    new_h = frame.shape[0] // SCALING_FACTOR
+    frame = cv2.resize(frame, (new_w, new_h))
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+    return frame
+
+
 def frame_data_generating_preprocessing(
     frame: cv2.Mat
 ) -> cv2.Mat:
@@ -29,7 +39,6 @@ def frame_preprocessing(frame: cv2.Mat) -> cv2.Mat:
     new_w = frame.shape[1] // SCALING_FACTOR
     new_h = frame.shape[0] // SCALING_FACTOR
     frame = cv2.resize(frame, (new_w, new_h))
-    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
     return frame
 
 
@@ -58,7 +67,7 @@ def draw_strob(frame: cv2.Mat, frame_annotations: List[np.ndarray]) -> cv2.Mat:
             frame,
             pt1=(annot[1], annot[0]),
             pt2=(annot[3], annot[2]),
-            color=(255, 0, 0),
+            color=0,
             thickness=1
         )
     return frame

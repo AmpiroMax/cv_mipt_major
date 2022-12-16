@@ -14,12 +14,11 @@ SAVE_POSITIVE_PATH = "09_motion_flow/homework_07/train_test_data/pos/"
 SAVE_NEGATIVE_PATH = "09_motion_flow/homework_07/train_test_data/neg/"
 DATA_CLIPS_NAMES = [
     "Clip_1",
-    "Clip_2",
-    "Clip_3",
+    "Clip_4",
+    "Clip_5",
     "Clip_37",
 ]
 DATA_TEST_CLIPS_NAMES = [
-    "Clip_4",
     "Clip_10"
 ]
 
