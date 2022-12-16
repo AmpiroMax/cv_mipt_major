@@ -8,7 +8,7 @@ from train_data_generator import (
 )
 from train_classificator_model import (
     DEVICE,
-    train_image_preprocessing,
+    dataset_image_preprocessing,
 
 )
 
@@ -17,11 +17,10 @@ def get_canditates_centres(frame: cv2.Mat) -> List[np.ndarray]:
     coords = []
     corners = cv2.goodFeaturesToTrack(
         image=frame,
-        maxCorners=10,
-        qualityLevel=0.001,
-        minDistance=1,
-        useHarrisDetector=True,
-        k=0
+        maxCorners=20,
+        qualityLevel=1e-6,
+        minDistance=30,
+        useHarrisDetector=True
     )
     corners = np.int0(corners)
 
@@ -71,9 +70,10 @@ def predict_strobs(frame: cv2.Mat, model: torch.nn.Module) -> List[np.ndarray]:
             continue
 
         segment = frame[y1: y2, x1:x2, :]
-        segment = train_image_preprocessing(segment).to(DEVICE)[None, ...]
+        segment = dataset_image_preprocessing(segment).to(DEVICE)
+        segment = torch.flatten(segment)[None, ...]
         prediction = model(segment).cpu()
-        if prediction < 0.75 or prediction > 0.95:
+        if prediction < 0.6:
             continue
         annots += [np.array([y1, x1, y2, x2])]
 

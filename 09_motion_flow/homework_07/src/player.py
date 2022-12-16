@@ -50,5 +50,5 @@ def play_video(video_name: str) -> None:
 
 
 if __name__ == "__main__":
-    video_name = "Clip_37"
+    video_name = "Clip_1"
     play_video(video_name)

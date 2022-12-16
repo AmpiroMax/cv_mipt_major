@@ -136,7 +136,7 @@ dmypy.json
 .vscode
 
 # HW7_data_files
-09_motion_flow/homework_07/train_test_data/pos/*.png
-09_motion_flow/homework_07/train_test_data/neg/*.png
+09_motion_flow/homework_07/train_test_data/test/
+09_motion_flow/homework_07/train_test_data/train/
 09_motion_flow/homework_07/train_test_data/models/model*
 09_motion_flow/homework_07/motion_detection

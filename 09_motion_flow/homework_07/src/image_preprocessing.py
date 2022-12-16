@@ -32,6 +32,7 @@ def frame_data_generating_preprocessing(
     new_w = frame.shape[1] // SCALING_FACTOR
     new_h = frame.shape[0] // SCALING_FACTOR
     frame = cv2.resize(frame, (new_w, new_h))
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
     return frame
 
 

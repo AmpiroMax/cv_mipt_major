@@ -9,23 +9,41 @@ import cv2
 import numpy as np
 from tqdm.auto import tqdm
 
-SEGMENT_SIZE = 32
-SAVE_POSITIVE_PATH = "09_motion_flow/homework_07/train_test_data/pos/"
-SAVE_NEGATIVE_PATH = "09_motion_flow/homework_07/train_test_data/neg/"
-DATA_CLIPS_NAMES = [
+SEGMENT_SIZE = 16
+SAVE_TRAIN_POSITIVE_PATH = "09_motion_flow/homework_07/train_test_data/train/pos/"
+SAVE_TRAIN_NEGATIVE_PATH = "09_motion_flow/homework_07/train_test_data/train/neg/"
+
+SAVE_TEST_POSITIVE_PATH = "09_motion_flow/homework_07/train_test_data/test/pos/"
+SAVE_TEST_NEGATIVE_PATH = "09_motion_flow/homework_07/train_test_data/test/neg/"
+
+DATA_TRAIN_CLIPS_NAMES = [
     "Clip_1",
     "Clip_4",
     "Clip_5",
     "Clip_37",
 ]
 DATA_TEST_CLIPS_NAMES = [
-    "Clip_10"
+    "Clip_2",
+    "Clip_7",
+    "Clip_10",
+    "Clip_11",
 ]
 
 
-def generate_data():
+def generate_data(mode: str = "train"):
     segment_idx = 0
-    for clip_name in DATA_CLIPS_NAMES:
+
+    segments = []
+
+    clips_names = DATA_TRAIN_CLIPS_NAMES
+    save_neg_path = SAVE_TRAIN_NEGATIVE_PATH
+    save_pos_path = SAVE_TRAIN_POSITIVE_PATH
+    if mode == "test":
+        clips_names = DATA_TEST_CLIPS_NAMES
+        save_neg_path = SAVE_TEST_NEGATIVE_PATH
+        save_pos_path = SAVE_TEST_POSITIVE_PATH
+
+    for clip_name in clips_names:
         annot_path = get_annot_path(clip_name)
         clip_annots = read_annotation(annot_path)
 
@@ -60,9 +78,11 @@ def generate_data():
                     if x1 > frame.shape[1] or x2 > frame.shape[1]:
                         continue
 
-                    segment = frame[y1: y2, x1:x2, :]
+                    segment = frame[y1: y2, x1:x2]
+                    segments += [segment]
+
                     cv2.imwrite(
-                        SAVE_POSITIVE_PATH+str(segment_idx).zfill(5)+".png",
+                        save_pos_path+str(segment_idx).zfill(5)+".png",
                         segment
                     )
 
@@ -77,9 +97,10 @@ def generate_data():
                         x2 = -SEGMENT_SIZE + \
                             strob_centre[1] + SEGMENT_SIZE // 2
 
-                    segment = frame[y1: y2, x1:x2, :]
+                    segment = frame[y1: y2, x1:x2]
+                    segments += [segment]
                     cv2.imwrite(
-                        SAVE_NEGATIVE_PATH+str(segment_idx).zfill(5)+".png",
+                        save_neg_path+str(segment_idx).zfill(5)+".png",
                         segment
                     )
 
@@ -89,7 +110,11 @@ def generate_data():
                 pbar.update(1)
 
         cap.release()
+        cv2.destroyAllWindows()
+    print(np.mean(np.array(segments), axis=(0, 1, 2)))
+    print(np.std(np.array(segments), axis=(0, 1, 2)))
 
 
 if __name__ == "__main__":
-    generate_data()
+    generate_data("train")
+    generate_data("test")
