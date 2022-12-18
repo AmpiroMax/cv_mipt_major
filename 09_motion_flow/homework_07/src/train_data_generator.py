@@ -6,8 +6,12 @@ from image_preprocessing import (
 )
 
 import cv2
+import logging
 import numpy as np
 from tqdm.auto import tqdm
+
+logging.basicConfig(level="INFO")
+logger = logging.getLogger("DATA_GENERATOR")
 
 SEGMENT_SIZE = 16
 SAVE_TRAIN_POSITIVE_PATH = "09_motion_flow/homework_07/train_test_data/train/pos/"
@@ -31,6 +35,7 @@ DATA_TEST_CLIPS_NAMES = [
 
 
 def generate_data(mode: str = "train"):
+    logger.info(f"Generating data for {mode}")
     segment_idx = 0
 
     segments = []
@@ -111,8 +116,12 @@ def generate_data(mode: str = "train"):
 
         cap.release()
         cv2.destroyAllWindows()
-    print(np.mean(np.array(segments), axis=(0, 1, 2)))
-    print(np.std(np.array(segments), axis=(0, 1, 2)))
+    mean = np.mean(np.array(segments), axis=(0, 1, 2))
+    std = np.std(np.array(segments), axis=(0, 1, 2))
+
+    logger.info(f"Data mean {mean}")
+    logger.info(f"Data std  {std}")
+    logger.info("Data was generated")
 
 
 if __name__ == "__main__":

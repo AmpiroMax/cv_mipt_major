@@ -17,9 +17,14 @@ from moving_object_detection import (
 )
 import cv2
 import torch
+import logging
+
+logging.basicConfig(level="INFO")
+logger = logging.getLogger("PLAYER")
 
 
 def play_video(video_name: str) -> None:
+    logger.info("Setting up video data")
     video_path = get_video_path(video_name)
     cap = cv2.VideoCapture(video_path)
 
@@ -29,6 +34,7 @@ def play_video(video_name: str) -> None:
     annot_path = get_annot_path(video_name)
     annots = read_annotation(annot_path)
 
+    logger.info("Playing video")
     frame_idx = 0
     while cap.isOpened():
         ret, frame = cap.read()
@@ -47,6 +53,7 @@ def play_video(video_name: str) -> None:
 
     cap.release()
     cv2.destroyAllWindows()
+    logger.info("Video has finished")
 
 
 if __name__ == "__main__":

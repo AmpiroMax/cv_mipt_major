@@ -9,6 +9,7 @@ from train_data_generator import (
 import os
 import cv2
 import torch
+import logging
 import numpy as np
 import matplotlib as plt
 import torch.nn as nn
@@ -16,6 +17,9 @@ from torchvision import transforms
 from torch.utils.data import Dataset, DataLoader
 from typing import List
 from tqdm.auto import tqdm
+
+logging.basicConfig(level="INFO")
+logger = logging.getLogger("MODEL_TRAINER")
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 MODEL_SAVE_PATH = "09_motion_flow/homework_07/train_test_data/models/"
@@ -232,7 +236,10 @@ def plot_history(history: List) -> None:
 
 
 def train_model():
+    logger.info("Setting up model training")
     model = SimplePerceptron().to(DEVICE)
+
+    logger.info("Preparing train and val data")
     train_files = PlanesDataset("train")
     val_files = PlanesDataset("test")
     optimizer = torch.optim.Adam(
@@ -241,6 +248,7 @@ def train_model():
     )
     criterion = torch.nn.BCELoss()
 
+    logger.info("Training model")
     history, best_model = train(
         train_files=train_files,
         val_files=val_files,
@@ -250,7 +258,9 @@ def train_model():
         epochs=80,
         batch_size=1024
     )
+    logger.info("Saving trained model")
     torch.save(best_model, MODEL_SAVE_PATH + "model")
+    logger.info("Training is done")
 
 
 if __name__ == "__main__":
